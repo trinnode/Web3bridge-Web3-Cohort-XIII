@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "es2020", // Recommended for modern Node.js environments
+    "module": "commonjs", // Or "esnext" if you're using ES modules everywhere
+    "esModuleInterop": true, // Allows default imports from modules that don't export default (like dotenv)
+    "forceConsistentCasingInFileNames": true, // Helps prevent errors on case-insensitive file systems
+    "strict": true, // Enables all strict type-checking options (highly recommended)
+    "skipLibCheck": true, // Skips type checking of declaration files (like node_modules/@types/*)
+    "resolveJsonModule": true, // Allows importing .json files
+    "outDir": "./dist", // Where compiled JavaScript files will be placed (common for Hardhat)
+    "types": [
+      "node", // For Node.js globals (e.g., process)
+      "mocha", // For Mocha test framework types
+      // Type extensions from Hardhat plugins:
+      "@nomicfoundation/hardhat-chai-matchers",
+      "@nomicfoundation/hardhat-ethers",
+      // For dotenv:
+      "@types/dotenv"
+    ]
+  },
+  "include": [
+    "./scripts", // Your deployment/interaction scripts
+    "./test", // Your test files
+    "./hardhat.config.ts" // Your Hardhat configuration file
+  ]
+  // "files": [
+  //   // If you have specific root files not covered by "include", list them here
+  //   // For example: "./some_other_root_file.ts"
+  // ]
+}
