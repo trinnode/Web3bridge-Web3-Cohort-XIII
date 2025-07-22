@@ -12,6 +12,6 @@ npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.js
 ```
 
-![Deployment Screenshot](images/screenshot.png)
-![Verification Screenshot](images/screenshot.png)
-![Proof on lisk-scan](images/screenshot.png)
+![Deployment Screenshot](images/screenshot1.png)
+![Verification Screenshot](images/screenshot2.png)
+![Proof on lisk-scan](images/screenshot3.png)
