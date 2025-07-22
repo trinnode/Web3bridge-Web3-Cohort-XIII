@@ -1,24 +1,16 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-require("dotenv").config();
-// import { vars } from "hardhat/config";
-
-// const INFURA_API_KEY = vars.get("SEPOLIA_URL_KEY");
-// const ETHERSCAN_API_KEY = vars.get("ETHERSCAN_API_KEY");
-// const SEPOLIA_PRIVATE_KEY = vars.get("PRIVATE_KEY");
-
-const { PRIVATE_KEY, ETHERSCAN_API_KEY, SEPOLIA_URL_KEY } = process.env;
+require('dotenv').config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.28",
+  solidity: "0.8.23",
   networks: {
-    sepolia: {
-      url: SEPOLIA_URL_KEY,
-      accounts: [`0x${PRIVATE_KEY}`],
+    // for testnet
+    'lisk-sepolia': {
+      url: 'https://rpc.sepolia-api.lisk.com',
+      accounts: [process.env.WALLET_KEY as string],
+      gasPrice: 1000000000,
     },
-  },
-  etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
   },
 };
 
