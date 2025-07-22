@@ -3,7 +3,7 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const StorageModule = buildModule("GreeterModuleModule", (m) => {
+const StorageModule = buildModule("StorageModule", (m) => {
 
 
   const storage = m.contract("Storage")
