@@ -13,9 +13,27 @@ module.exports = {
     'lisk-sepolia': {
       url: 'https://rpc.sepolia-api.lisk.com',
       accounts: ACCOUNTS,
+      gasPrice: 1000000000,
     },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
+    apiKey: {
+      "lisk-sepolia": "123",
+      sepolia: ETHERSCAN_API_KEY,
+    },
+    customChains: [
+      {
+          network: "lisk-sepolia",
+          chainId: 4202,
+          urls: {
+              apiURL: "https://sepolia-blockscout.lisk.com/api",
+              browserURL: "https://sepolia-blockscout.lisk.com"
+          }
+      }
+    ]
   },
+  sourcify: {
+    enabled: false
+  },
+  
 };
