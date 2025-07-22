@@ -3,12 +3,12 @@
 
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
-const GreeterModule = buildModule("GreeterModuleModule", (m) => {
+const StorageModule = buildModule("GreeterModuleModule", (m) => {
 
 
-  const greeter = m.contract("Greeter")
+  const storage = m.contract("Storage")
 
-  return { greeter };
+  return { storage };
 });
 
-export default GreeterModule;
+export default StorageModule;
