@@ -7,10 +7,28 @@ dotenv.config();
 const config: HardhatUserConfig = {
   solidity: "0.8.28",
   networks: {
-    alchemy: {
-      url: process.env.ALCHEMY_RPC_URL,
+    lisk: {
+      url: "https://lisk-sepolia.drpc.org",
+      chainId: 4202,
       accounts: [process.env.PRIVATE_KEY!],
     },
+  },
+  etherscan: {
+    // Your API key for Blockscout
+    // It is recommended to store this in your .env file
+    apiKey: {
+      lisk: '1234',
+    },
+    customChains: [
+      {
+        network: "lisk",
+        chainId: 4202,
+        urls: {
+          apiURL: "https://sepolia-blockscout.lisk.com/api",
+          browserURL: "https://sepolia-blockscout.lisk.com",
+        },
+      },
+    ],
   },
 };
 
