@@ -40,6 +40,7 @@ function store(uint256 _favoriteNumber) public {
 * **External:** The **`external` specifier is not applicable to state variables**.
 
 **Declaration format for state variables in Solidity:**
+`Type    Visibility specifier    name;`
 **Example:**
 
 ```solidity
