@@ -1,78 +1,55 @@
-## Solidity Visibility Specifiers
+In Solidity, visibility specifiers define how and where variables and functions can be accessed in a smart contract. They control the scope and accessibility of code components.This is a summary of visibility specifiers for variables and functions in Solidity.
 
+Visibility Specifiers in Solidity
+Solidity has four visibility specifiers: public, private, internal, and external. These apply to both variables and functions, though their behavior differs slightly depending on the context.
 
-### Variable Visibility
+1. Public
+What it means: Accessible from everywhere—inside the contract, derived contracts, other contracts, and externally (e.g., via transactions or external accounts).
+Variables:
+Automatically generates a getter function to read the variable’s value.
+Anyone can read the variable (e.g., via a blockchain explorer or external call).
+Example: uint public myNumber = 42; (creates a getter function to read myNumber).
+Functions:
+Can be called internally (within the contract), by derived contracts, other contracts, or externally.
+Example: function doSomething() public { ... } (callable from anywhere).
+Use case: When you want a variable or function to be openly accessible, like public data or an entry point for users.
 
-Visibility is the degree of accessibility of a variable or a function as the case may be.
-Generally there four visibilites for both variables and functions but singularly variables use three while function make use of all four types.
-#### 1. Public
-#### 2. Private
-#### 3. Internal
-#### 4. external
+2. Private
+What it means: Only accessible within the contract where it’s defined. Not accessible by derived contracts, other contracts, or externally.
+Variables:
+Can only be read or modified by functions within the same contract.
+Example: uint private secretNumber = 100; (only contract’s functions can access secretNumber).
+Functions:
+Can only be called by other functions within the same contract.
+Example: function hiddenLogic() private { ... } (only callable inside the contract).
+Use case: For sensitive data or internal logic that shouldn’t be exposed outside the contract.
 
-* **Public:**
-    * **Description:** Public variables are accessible from anywhere, both within the contract/scope they are defined in and from external contracts/scopes. It is Often used for data that needs to be read or modified by other parts of the application or by external entities.
-    * **USE CASE💡:** A `balance` variable in a cryptocurrency contract that needs to be readable by anyone.
+3. Internal
+What it means: Accessible within the contract and in derived contracts (contracts that inherit from it). Not accessible externally or by other contracts.
+Variables:
+Can be read or modified by the contract and its derived contracts.
+Example: uint internal familySecret = 200; (accessible in the contract and its child contracts).
+Functions:
+Can be called by the contract and its derived contracts.
+Example: function internalLogic() internal { ... } (callable by the contract or its children).
+Use case: For data or logic that should be shared with derived contracts but not exposed externally.
 
-* **Private:**
-    * **Description:** Private variables are only accessible from within the contract/scope they are defined in. They cannot be accessed or modified by external contracts or even by derived contracts (in object-oriented programming contexts). Ideal for data that should remain internal to the contract and not be exposed to the outside world, ensuring data encapsulation and security.
-    * **USE CASE💡:** An internal counter variable that tracks the number of times a specific internal function has been called.
+4. External
+What it means: Only accessible from outside the contract (e.g., by other contracts or external accounts). Not callable internally unless using this.
+Variables:
+Cannot be declared external. This specifier is only for functions.
+Example: uint external myVar; (will cause a compilation error).
+Functions:
+Can only be called by external accounts or other contracts, not directly within the contract (unless using this.functionName()).
+Example: function externalAction() external { ... } (only callable externally).
+Note: Using external can save gas for functions meant to be called only from outside.
+Use case: For functions designed as public interfaces for other contracts or users, optimizing gas usage.
 
-* **Internal:**
-    * **Description:** Internal variables are accessible only within the contract/scope they are defined in and by derived contracts/scopes (in object-oriented programming contexts). They are not directly accessible from external contracts. Useful for data that needs to be shared within an inheritance hierarchy but not exposed externally.
-    * **USE CASE💡:** A base contract might have an `internal` variable representing a common configuration parameter that derived contracts need to access.
+Key Notes in Using Visibility Specifiers In Solidity
+Default Visibility:
+Variables: Default to internal if no visibility is specified.
+Functions: Default to public if no visibility is specified (Solidity versions before 0.7.0; always specify explicitly for clarity).
+Inheritance: Derived contracts can access internal and public members of the parent contract but not private ones.
+Gas Efficiency: external functions are slightly cheaper for external calls since they don’t need to handle internal call overhead.
+Security: Use private or internal for sensitive data or logic to limit exposure. Be cautious with public, as anyone can read or call it.
 
-
-### Function Visibility
-
-Functions can make use of all four visibility types, providing fine-grained control over their accessibility:
-
-* **Public:**
-    * **Description:** Public functions can be called from anywhere, including other contracts, external accounts, and internal functions within the same contract. Used for functions that represent the primary interface of the contract, allowing external interaction.
-    * **USE CASE💡:** A `transfer()` function in a token contract that allows users to send tokens to each other.
-
-* **Private:**
-    * **Description:** Private functions can only be called from within the same contract/scope they are defined in. They are not accessible by external contracts or even by derived contracts. Best for helper functions or internal logic that should not be exposed or directly invoked from outside the contract.
-    * **USE CASE💡:** A `_calculateTax()` function that is only called by an internal `processPayment()` function.
-
-* **Internal:**
-    * **Description:** Internal functions can be called from within the same contract/scope and by derived contracts/scopes. They are not directly callable by external accounts or contracts. Useful for functions that provide common functionality for an inheritance hierarchy but are not meant for external consumption.
-    * **USE CASE💡:** An `internal _validateAddress()` function in a base contract that derived contracts can use for address validation before performing operations.
-
-* **External:**
-    * **Description:** External functions can only be called from outside the contract. They cannot be called internally by other functions within the same contract. Primarily used for functions that are intended to be invoked by external accounts or other contracts, optimizing gas costs in some blockchain environments (like Solidity).
-    * **USE CASE💡:** A `deposit()` function that allows users to send funds to the contract from their external accounts.
-
-Solidity provides four visibility specifiers to control access to variables and functions in contracts:
-
-| Specifier    | Variables                          | Functions                          | Inheriting Contracts | External Calls |
-|--------------|------------------------------------|------------------------------------|----------------------|----------------|
-| `public`     | Accessible everywhere              | Accessible everywhere              | ✅ Yes               | ✅ Yes         |
-| `private`    | Only within defining contract      | Only within defining contract      | ❌ No                | ❌ No          |
-| `internal`   | Defining contract + child contracts| Defining contract + child contracts| ✅ Yes               | ❌ No          |
-| `external`   | ❌ Not applicable                 | Only via external calls            | ✅ Yes               | ✅ Yes         |
-
-### Key Notes:
-1. **Default Visibility**: 
-   - Variables: `internal`  
-   - Functions: `public`  
-2. **Gas Efficiency**: 
-   - `external` functions are cheaper for calls from outside the contract.
-3. **Best Practices**:
-   - Use `private` for sensitive data/functions.
-   - Prefer `external` over `public` for functions only called externally.
-   - Use `internal` for reusable code in child contracts.
-
-Example:
-```solidity
-contract Example {
-    uint256 public publicVar;  // Readable by anyone
-    uint256 private privateVar; // Only this contract
-    uint256 internal internalVar; // This + child contracts
-    
-    function publicFunc() public {}       // Callable externally + internally
-    function privateFunc() private {}     // Only this contract
-    function internalFunc() internal {}   // This + child contracts
-    function externalFunc() external {}   // Only via external calls
-}
-```
