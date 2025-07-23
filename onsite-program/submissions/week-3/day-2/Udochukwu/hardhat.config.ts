@@ -7,13 +7,13 @@ require("dotenv").config();
 // const ETHERSCAN_API_KEY = vars.get("ETHERSCAN_API_KEY");
 // const SEPOLIA_PRIVATE_KEY = vars.get("PRIVATE_KEY");
 
-const { PRIVATE_KEY, ETHERSCAN_API_KEY, SEPOLIA_URL_KEY } = process.env;
+const { PRIVATE_KEY, ETHERSCAN_API_KEY, LISK_URL_KEY } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.30",
   networks: {
-    sepolia: {
-      url: SEPOLIA_URL_KEY,
+    lisk: {
+      url: LISK_URL_KEY,
       accounts: [`0x${PRIVATE_KEY}`],
     },
   },
