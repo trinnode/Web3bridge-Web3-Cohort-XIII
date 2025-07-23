@@ -13,19 +13,19 @@ Solidity provides four visibility specifiers that control how functions and stat
 
 ```solidity
 contract MyContract {
-    function publicFunc() public pure returns (string memory) {
+    function publicFunction() public pure returns (string memory) {
         return "public";
     }
 
-    function internalFunc() internal pure returns (string memory) {
+    function internalFunction() internal pure returns (string memory) {
         return "internal";
     }
 
-    function privateFunc() private pure returns (string memory) {
+    function privateFunction() private pure returns (string memory) {
         return "private";
     }
 
-    function externalFunc() external pure returns (string memory) {
+    function externalFunction() external pure returns (string memory) {
         return "external";
     }
 }
