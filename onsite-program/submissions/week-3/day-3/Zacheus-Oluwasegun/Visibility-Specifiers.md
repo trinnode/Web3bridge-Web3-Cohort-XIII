@@ -6,9 +6,9 @@ Visibility specifiers in Solidity control who can access your contract's variabl
 
 ---
 
-## Visibility Modifiers Comparison
+## Visibility Specifiers Comparison
 
-### Modifiers Available for Both Variables and Functions
+### Specifiers Available for Both Variables and Functions
 
 **public**
 - **Variables**: Automatically generates getter functions, which allows other contracts to read their values.
@@ -22,7 +22,7 @@ Visibility specifiers in Solidity control who can access your contract's variabl
 - **Variables**: private as the name implies, only accessible within the defining contract
 - **Functions**: Only accessible within the defining contract, not inherited by derived contracts. same as variables
 
-### Function-Only Modifiers
+### Function-Only Specifiers
 
 **external**
 - Only applies to functions
@@ -56,4 +56,4 @@ Visibility specifiers in Solidity control who can access your contract's variabl
 
 ## Security Considerations
 
-All visibility modifiers only control contract-level access. Private and internal modifiers do not provide true privacy since all blockchain data remains publicly visible to external observers. They only prevent other contracts from accessing the information programmatically.
+All visibility Specifiers only control contract-level access. Private and internal Specifiers do not provide true privacy since all blockchain data remains publicly visible to external observers. They only prevent other contracts from accessing the information programmatically.
