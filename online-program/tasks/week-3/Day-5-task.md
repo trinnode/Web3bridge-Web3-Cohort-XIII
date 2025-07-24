@@ -1,4 +1,4 @@
-# Task for Week 3 Day 5
+# Task: Study and Summarize Inheritance
 
 ## Assignment
 
