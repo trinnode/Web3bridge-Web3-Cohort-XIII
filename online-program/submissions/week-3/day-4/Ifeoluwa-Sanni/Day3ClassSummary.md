@@ -26,3 +26,17 @@ There are three variable scope in Smart contracts
 It  is a special type of function which is executed once only on contract creation.
 
 There are abstract and Interface Contracts
+
+## Solidiity Data Types
+- **Value Types:** These include uint, int, addresses, booleans, fixed size bytes
+- **Reference Types:** These include Fixed size array, dynamic size array, bytes arrays, composite structs and mappings.
+ **A struct**  is a piece of data that has one or more properties or attributes, and specifying each property’s data type and name. 
+
+ ## Function Modifiers
+ A modifier is a snippet of code that can run automatically before or after you run the main function.Modifiers can be inherited from parent contracts too. 
+
+ ## Errors Handling in Solidity
+ There are three approaches of handling errors in Solidity
+ - **A require() function** to validate inputs, validate return values, and check other conditions before we proceed with our code logic.
+ - **An assert() function** is quite similar to require() except that it throws an error with type Panic(uint256) rather than Error(string).
+ -  **A revert() call** is used in the same situation as a require() but when the conditional logic is much more complex.
