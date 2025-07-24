@@ -29,7 +29,7 @@ A smart contract in Solidity includes several key components:
 ## Visibility Modifiers
 Solidity uses visibility modifiers to control access to functions and variables:
 
-- **Public**: Accessible everywhere—within the contract, in derived (child) contracts, outside the contract, and externally (e.g., via transactions).
+- **Public**: Accessible everywhere within the contract, in derived (child) contracts, outside the contract, and externally (e.g., via transactions).
 - **External**: Only callable from outside the contract (e.g., by other contracts or transactions).
 - **Private**: Only accessible within the contract where it’s defined.
 - **Internal**: Accessible within the contract and its derived (child) contracts.
