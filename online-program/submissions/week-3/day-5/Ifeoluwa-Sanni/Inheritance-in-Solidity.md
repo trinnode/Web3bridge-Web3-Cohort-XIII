@@ -1,4 +1,4 @@
-# Solidity Inheritance - Complete Summary
+# Inheritance in Solidity
 
 ## What is Inheritance?
 
