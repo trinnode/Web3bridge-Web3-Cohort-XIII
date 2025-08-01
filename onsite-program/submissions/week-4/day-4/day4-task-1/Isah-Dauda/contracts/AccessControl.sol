@@ -80,4 +80,19 @@ contract garageAccess{
     function getEmployee(address _addressOf) external  view returns (Employee memory){
         return employeeData[_addressOf];
     }
+
+    function deleteEmployee(address _address) external onlyFounder(msg.sender) {
+    require(bytes(employeeData[_address].name).length != 0, "Employee does not exist");
+
+    delete employeeData[_address];
+
+    for (uint i = 0; i < employeeList.length; i++) {
+        if (employeeList[i] == _address) {
+            employeeList[i] = employeeList[employeeList.length - 1];
+            employeeList.pop();
+            return;
+        }
+    }
+}
+
 }
