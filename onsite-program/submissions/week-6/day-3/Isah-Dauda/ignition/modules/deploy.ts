@@ -1,20 +1,36 @@
-// This setup uses Hardhat Ignition to manage smart contract deployments.
-// Learn more about it at https://hardhat.org/ignition
-
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
+import { keccak256, toUtf8Bytes } from "ethers/lib/utils";
 
-const JAN_1ST_2030 = 1893456000;
-const ONE_GWEI: bigint = 1_000_000_000n;
+const TIMELOCK_MIN_DELAY = 3600;
+const VOTING_PERIOD = 50400;
+const QUORUM_VOTES = BigInt(4 * 10 ** 18);
 
-const LockModule = buildModule("LockModule", (m) => {
-  const unlockTime = m.getParameter("unlockTime", JAN_1ST_2030);
-  const lockedAmount = m.getParameter("lockedAmount", ONE_GWEI);
+const PROPOSER_ROLE = keccak256(toUtf8Bytes("PROPOSER_ROLE"));
+const EXECUTOR_ROLE = keccak256(toUtf8Bytes("EXECUTOR_ROLE"));
+const TIMELOCK_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
-  const lock = m.contract("Lock", [unlockTime], {
-    value: lockedAmount,
-  });
+const AdvancedDAODeploymentModule = buildModule("AdvancedDAODeploymentModule", (m) => {
+  const [deployer] = m.getAccount(0);
 
-  return { lock };
+  const timelock = m.contract("TimelockController", [TIMELOCK_MIN_DELAY, [], [], deployer]);
+
+  const membershipNFT = m.contract("MembershipNFT", [deployer]);
+
+  const roles = m.contract("Roles");
+
+  const dao = m.contract("DAO", [
+    roles.address,
+    membershipNFT.address,
+    timelock.address,
+    VOTING_PERIOD,
+    QUORUM_VOTES,
+  ]);
+
+  m.call(timelock, "grantRole", [PROPOSER_ROLE, dao.address]);
+  m.call(timelock, "grantRole", [EXECUTOR_ROLE, "0x0000000000000000000000000000000000000000"]);
+  m.call(timelock, "renounceRole", [TIMELOCK_ADMIN_ROLE, deployer]);
+
+  return { timelock, membershipNFT, roles, dao };
 });
 
-export default LockModule;
+export default AdvancedDAODeploymentModule;

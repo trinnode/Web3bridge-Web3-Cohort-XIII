@@ -1,127 +1,44 @@
-import {
-  time,
-  loadFixture,
-} from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { expect } from "chai";
 import hre from "hardhat";
+// ... imports
 
-describe("Lock", function () {
-  // We define a fixture to reuse the same setup in every test.
-  // We use loadFixture to run this setup once, snapshot that state,
-  // and reset Hardhat Network to that snapshot in every test.
-  async function deployOneYearLockFixture() {
-    const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-    const ONE_GWEI = 1_000_000_000;
-
-    const lockedAmount = ONE_GWEI;
-    const unlockTime = (await time.latest()) + ONE_YEAR_IN_SECS;
-
-    // Contracts are deployed using the first signer/account by default
-    const [owner, otherAccount] = await hre.ethers.getSigners();
-
-    const Lock = await hre.ethers.getContractFactory("Lock");
-    const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-    return { lock, unlockTime, lockedAmount, owner, otherAccount };
+describe("Advanced DAO Workflow", function () {
+  async function deployAdvancedFixture() {
+    // ... setup code to deploy, mint NFTs, and grant roles ...
+    // ... create a simple Target contract to be called by proposals
+    const TargetContract = await hre.ethers.getContractFactory("Target");
+    const target = await TargetContract.deploy();
+    return { /* ...other variables... */, target };
   }
 
-  describe("Deployment", function () {
-    it("Should set the right unlockTime", async function () {
-      const { lock, unlockTime } = await loadFixture(deployOneYearLockFixture);
+  it("Should successfully execute a proposal through the full lifecycle", async function () {
+    const { dao, timelock, member1, member1TokenId, target } = await loadFixture(deployAdvancedFixture);
 
-      expect(await lock.unlockTime()).to.equal(unlockTime);
-    });
+    // 1. Create Proposal to call `setValue(42)` on the Target contract
+    const targetInterface = new hre.ethers.Interface(["function setValue(uint256)"]);
+    const calldata = targetInterface.encodeFunctionData("setValue", [42]);
+    await dao.connect(member1).createProposal([await target.getAddress()], [0], [calldata], "Set Target Value", member1TokenId);
+    
+    // 2. Vote
+    await dao.connect(member1).vote(0, true, member1TokenId);
+    // ... more votes to meet quorum ...
 
-    it("Should set the right owner", async function () {
-      const { lock, owner } = await loadFixture(deployOneYearLockFixture);
+    // 3. Fast-forward past voting period
+    await hre.network.provider.send("evm_increaseTime", [VOTING_PERIOD * 12 + 1]);
+    await hre.network.provider.send("evm_mine");
 
-      expect(await lock.owner()).to.equal(owner.address);
-    });
+    // 4. Queue the proposal in the Timelock
+    await expect(dao.connect(member1).queue(0)).to.emit(timelock, "CallScheduled");
 
-    it("Should receive and store the funds to lock", async function () {
-      const { lock, lockedAmount } = await loadFixture(
-        deployOneYearLockFixture
-      );
+    // 5. Fast-forward past the timelock delay
+    await hre.network.provider.send("evm_increaseTime", [TIMELOCK_MIN_DELAY + 1]);
+    await hre.network.provider.send("evm_mine");
 
-      expect(await hre.ethers.provider.getBalance(lock.target)).to.equal(
-        lockedAmount
-      );
-    });
+    // 6. Execute the proposal
+    await expect(dao.connect(member1).execute(0)).to.emit(timelock, "CallExecuted");
 
-    it("Should fail if the unlockTime is not in the future", async function () {
-      // We don't use the fixture here because we want a different deployment
-      const latestTime = await time.latest();
-      const Lock = await hre.ethers.getContractFactory("Lock");
-      await expect(Lock.deploy(latestTime, { value: 1 })).to.be.revertedWith(
-        "Unlock time should be in the future"
-      );
-    });
-  });
-
-  describe("Withdrawals", function () {
-    describe("Validations", function () {
-      it("Should revert with the right error if called too soon", async function () {
-        const { lock } = await loadFixture(deployOneYearLockFixture);
-
-        await expect(lock.withdraw()).to.be.revertedWith(
-          "You can't withdraw yet"
-        );
-      });
-
-      it("Should revert with the right error if called from another account", async function () {
-        const { lock, unlockTime, otherAccount } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // We can increase the time in Hardhat Network
-        await time.increaseTo(unlockTime);
-
-        // We use lock.connect() to send a transaction from another account
-        await expect(lock.connect(otherAccount).withdraw()).to.be.revertedWith(
-          "You aren't the owner"
-        );
-      });
-
-      it("Shouldn't fail if the unlockTime has arrived and the owner calls it", async function () {
-        const { lock, unlockTime } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        // Transactions are sent using the first signer by default
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw()).not.to.be.reverted;
-      });
-    });
-
-    describe("Events", function () {
-      it("Should emit an event on withdrawals", async function () {
-        const { lock, unlockTime, lockedAmount } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw())
-          .to.emit(lock, "Withdrawal")
-          .withArgs(lockedAmount, anyValue); // We accept any value as `when` arg
-      });
-    });
-
-    describe("Transfers", function () {
-      it("Should transfer the funds to the owner", async function () {
-        const { lock, unlockTime, lockedAmount, owner } = await loadFixture(
-          deployOneYearLockFixture
-        );
-
-        await time.increaseTo(unlockTime);
-
-        await expect(lock.withdraw()).to.changeEtherBalances(
-          [owner, lock],
-          [lockedAmount, -lockedAmount]
-        );
-      });
-    });
+    // 7. Verify the state change on the target contract
+    expect(await target.value()).to.equal(42);
   });
 });
