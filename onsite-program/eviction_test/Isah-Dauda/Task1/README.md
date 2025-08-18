@@ -2,6 +2,10 @@
 
 ```0x6dD0110C934C265f5268Dcf6E868486Be6698835```
 
+Successfully verified contract Lottery on the block explorer.
+
+https://sepolia-blockscout.lisk.com/address/0x6dD0110C934C265f5268Dcf6E868486Be6698835#code
+
 # TESTING 
 
 Compiled 1 Solidity file successfully (evm target: paris).
