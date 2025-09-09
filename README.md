@@ -1,4 +1,5 @@
 # 🚀 Web3 Staking dApp
+(Isah Dauda)
 
 A modern decentralized staking application built with React, Wagmi v2, and RainbowKit for Ethereum Sepolia testnet.
 
